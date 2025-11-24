@@ -3,6 +3,8 @@
 
 <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Luna MC - Minigame Đoán Số</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -290,6 +292,64 @@
                 font-size: 14px;
             }
         }
+        @media (max-width: 600px) {
+
+  body {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;  /* canh giữa theo chiều dọc */
+    align-items: center;      /* canh giữa theo chiều ngang */
+    min-height: 100vh;
+  }
+
+  .game-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 20px; 
+    padding: 40px 24px;
+    margin: 0 12px;
+    box-shadow: none;
+    transform: none;
+  }
+
+  h1 {
+    font-size: 28px;
+  }
+
+  .subtitle {
+    font-size: 18px;
+  }
+
+  .desc {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  input#guess {
+    font-size: 18px;
+    padding: 16px 18px;
+    border-radius: 12px;
+  }
+
+  button {
+    font-size: 18px;
+    padding: 14px 22px;
+    border-radius: 16px;
+  }
+
+  #resetBtn {
+    font-size: 18px;
+    padding: 14px 22px;
+  }
+}
     </style>
 </head>
 

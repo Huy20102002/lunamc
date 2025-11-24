@@ -243,33 +243,51 @@
             z-index: -1;
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 600px) {
+
+            .card {
+                width: 100%;
+                max-width: 100%;
+                margin: 0 12px;
+                /* chừa 2 bên 12px cho đẹp */
+                border-radius: 24px;
+                /* bo góc kiểu app mobile */
+                padding: 40px 26px;
+                /* padding lớn hơn */
+                transform: scale(1.08);
+                /* phóng to thêm 8% trên mobile */
+            }
+
             h1 {
-                font-size: 26px;
+                font-size: 28px;
             }
 
             .subtitle {
-                font-size: 16px;
+                font-size: 18px;
             }
 
             .desc {
-                font-size: 15px;
+                font-size: 16px;
+                line-height: 1.6;
             }
 
             input#guess {
-                font-size: 16px;
-                padding: 14px;
+                font-size: 18px;
+                padding: 14px 16px;
             }
 
             button {
-                font-size: 16px;
-                padding: 12px 20px;
+                font-size: 18px;
+                padding: 14px 22px;
             }
 
-            .card {
-                padding: 36px 26px;
-                border-radius: 22px;
-                width: 92%;
+            #resetBtn {
+                font-size: 18px;
+                padding: 12px 22px;
+            }
+
+            .hint-text {
+                font-size: 14px;
             }
         }
     </style>

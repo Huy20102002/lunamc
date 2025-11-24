@@ -334,12 +334,32 @@
         // Số bí mật cố định
         let secret = 36;
 
+        // Lấy số lần đoán từ localStorage
+        let guessCount = Number(localStorage.getItem("guessCount")) || 0;
+
+        // Khi load trang nếu vượt 10 thì khóa ngay
+        window.onload = function () {
+            if (guessCount >= 10) {
+                lockGame();
+                alert("⛔ Bạn đã nhập quá 10 lần – không thể nhập thêm!");
+            }
+        };
+
         function checkGuess() {
             const guessInput = document.getElementById("guess").value;
             const msg = document.getElementById("message");
             const resetBtn = document.getElementById("resetBtn");
 
-            msg.className = ""; // reset class
+            msg.className = "";
+
+            // Nếu quá 10 lần -> alert ngay và khóa game
+            if (guessCount >= 10) {
+                alert("⛔ Bạn đã nhập quá 10 lần – không thể nhập thêm!");
+                msg.innerHTML = "⛔ Bạn đã nhập quá 10 lần – không thể nhập thêm!";
+                msg.classList.add("error");
+                lockGame();
+                return;
+            }
 
             // Kiểm tra rỗng
             if (!guessInput.trim()) {
@@ -348,7 +368,7 @@
                 return;
             }
 
-            // Chỉ cho phép số, không chữ, không ký tự đặc biệt
+            // Chỉ cho nhập số
             if (!/^\d+$/.test(guessInput)) {
                 msg.innerHTML = "❌ Không được nhập chữ hoặc ký tự đặc biệt!";
                 msg.classList.add("error");
@@ -357,26 +377,53 @@
 
             const guess = Number(guessInput);
 
+            // Tăng lượt đoán
+            guessCount++;
+            localStorage.setItem("guessCount", guessCount);
+
+            // Logic đoán số
             if (guess < secret) {
-                msg.innerHTML = "🔼 Số bạn đoán <strong>bé hơn</strong> số bí mật!";
+                msg.innerHTML = "🔼 Số bạn đoán **bé hơn** số bí mật!";
                 msg.classList.add("hint");
             } else if (guess > secret) {
-                msg.innerHTML = "🔽 Số bạn đoán <strong>lớn hơn</strong> số bí mật!";
+                msg.innerHTML = "🔽 Số bạn đoán **lớn hơn** số bí mật!";
                 msg.classList.add("hint");
             } else {
-                msg.innerHTML = "🎉 Chính xác! Bạn đã đoán đúng số bí mật!";
+                msg.innerHTML = "🎉 Chính xác! Bạn đã đoán đúng!";
                 msg.classList.add("success");
                 resetBtn.style.display = "inline-flex";
+            }
+
+            // Khi vượt 10 → alert + khóa input
+            if (guessCount >= 10) {
+                alert("⛔ Bạn đã nhập quá 10 lần – không thể nhập thêm!");
+                msg.innerHTML = "⛔ Bạn đã nhập quá 10 lần – không thể nhập thêm!";
+                lockGame();
             }
         }
 
         function resetGame() {
-            // secret vẫn = 36
             document.getElementById("guess").value = "";
             const msg = document.getElementById("message");
             msg.innerHTML = "";
             msg.className = "";
             document.getElementById("resetBtn").style.display = "none";
+
+            // Reset counter
+            guessCount = 0;
+            localStorage.setItem("guessCount", 0);
+
+            unlockGame();
+        }
+
+        function lockGame() {
+            document.getElementById("guess").disabled = true;
+            document.querySelector("button[onclick='checkGuess()']").disabled = true;
+        }
+
+        function unlockGame() {
+            document.getElementById("guess").disabled = false;
+            document.querySelector("button[onclick='checkGuess()']").disabled = false;
         }
     </script>
 </body>

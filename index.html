@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Luna MC - Minigame Đoán Số</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at 10% 20%, #ffe6f7 0, transparent 50%),
+        radial-gradient(circle at 80% 0, #d9e8ff 0, transparent 55%),
+        radial-gradient(circle at 0 100%, #ffe7d6 0, transparent 55%),
+        #f3f4f6;
+      padding: 20px;
+    }
+
+    .game-wrapper {
+      position: relative;
+    }
+
+    .glow-dot {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      border-radius: 999px;
+      filter: blur(35px);
+      opacity: 0.7;
+      z-index: 0;
+    }
+
+    .glow-dot.pink {
+      background: #ff6bb5;
+      top: -40px;
+      left: -60px;
+    }
+
+    .glow-dot.blue {
+      background: #4f9cff;
+      bottom: -40px;
+      right: -60px;
+    }
+
+    .card {
+      position: relative;
+      z-index: 1;
+      width: 360px;
+      max-width: 100%;
+      background: rgba(255, 255, 255, 0.93);
+      border-radius: 18px;
+      box-shadow:
+        0 20px 40px rgba(15, 23, 42, 0.18),
+        0 0 0 1px rgba(148, 163, 184, 0.2);
+      padding: 28px 26px 26px;
+      text-align: center;
+      animation: float 3.5s ease-in-out infinite;
+      backdrop-filter: blur(10px);
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-6px); }
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: rgba(15, 23, 42, 0.05);
+      color: #64748b;
+      margin-bottom: 6px;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 0 6px rgba(34, 197, 94, 0.35);
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 4px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      font-weight: 600;
+      color: #ef4444;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .subtitle span.icon {
+      font-size: 18px;
+    }
+
+    .desc {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    input#guess {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.18s ease;
+      background: #f9fafb;
+    }
+
+    input#guess::placeholder {
+      color: #9ca3af;
+    }
+
+    input#guess:focus {
+      background: #ffffff;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.35);
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 999px;
+      padding: 9px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #6366f1, #ec4899);
+      color: white;
+      box-shadow: 0 10px 20px rgba(99, 102, 241, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+      box-shadow: 0 14px 26px rgba(99, 102, 241, 0.45);
+    }
+
+    button:active {
+      transform: translateY(0);
+      box-shadow: 0 8px 18px rgba(79, 70, 229, 0.35);
+    }
+
+    #resetBtn {
+      margin-top: 10px;
+      display: none;
+      background: linear-gradient(135deg, #22c55e, #14b8a6);
+      box-shadow: 0 10px 20px rgba(34, 197, 94, 0.35);
+    }
+
+    #message {
+      min-height: 22px;
+      font-size: 13px;
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    #message.error {
+      color: #ef4444;
+    }
+
+    #message.hint {
+      color: #6366f1;
+    }
+
+    #message.success {
+      color: #16a34a;
+      font-weight: 600;
+    }
+
+    .hint-text {
+      margin-top: 8px;
+      font-size: 11px;
+      color: #9ca3af;
+    }
+    body {
+    background: url("/image.png") center/cover no-repeat fixed;
+    filter: none;
+}
+
+/* Làm lớp phủ mờ */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.55); /* độ mờ */
+    backdrop-filter: blur(5px);  /* làm mờ mạnh */
+    z-index: -1;
+}
+  </style>
+</head>
+<body>
+  <div class="game-wrapper">
+    <div class="glow-dot pink"></div>
+    <div class="glow-dot blue"></div>
+
+    <div class="card">
+      <div class="badge">
+        <span class="badge-dot"></span>
+        <span>LunaMC • Event mini game</span>
+      </div>
+
+      <h1>LunaMC</h1>
+
+      <div class="subtitle">
+        <span class="icon">🎯</span>
+        <span>Minigame Đoán Số</span>
+      </div>
+
+      <p class="desc">
+        Hãy nhập một số từ <strong>1–100</strong>.  
+        Nếu đoán đúng, bạn sẽ nhận được phần quà đặc biệt từ Luna MC!
+      </p>
+
+      <div class="input-group">
+        <input
+          id="guess"
+          type="text"
+          placeholder="Nhập số bạn đoán"
+          autocomplete="off"
+        />
+        <button onclick="checkGuess()">Đoán!</button>
+      </div>
+
+      <div id="message"></div>
+      <p class="hint-text">
+        💡 Gợi ý: Chỉ được nhập số, không nhập chữ hay ký tự đặc biệt.
+      </p>
+
+      <button id="resetBtn" onclick="resetGame()">Chơi lại vòng mới</button>
+    </div>
+  </div>
+
+  <script>
+    // Số bí mật cố định
+    let secret = 36;
+
+    function checkGuess() {
+      const guessInput = document.getElementById("guess").value;
+      const msg = document.getElementById("message");
+      const resetBtn = document.getElementById("resetBtn");
+
+      msg.className = ""; // reset class
+
+      // Kiểm tra rỗng
+      if (!guessInput.trim()) {
+        msg.innerHTML = "⚠️ Hãy nhập một số!";
+        msg.classList.add("error");
+        return;
+      }
+
+      // Chỉ cho phép số, không chữ, không ký tự đặc biệt
+      if (!/^\d+$/.test(guessInput)) {
+        msg.innerHTML = "❌ Không được nhập chữ hoặc ký tự đặc biệt!";
+        msg.classList.add("error");
+        return;
+      }
+
+      const guess = Number(guessInput);
+
+      if (guess < secret) {
+        msg.innerHTML = "🔼 Số bạn đoán <strong>bé hơn</strong> số bí mật!";
+        msg.classList.add("hint");
+      } else if (guess > secret) {
+        msg.innerHTML = "🔽 Số bạn đoán <strong>lớn hơn</strong> số bí mật!";
+        msg.classList.add("hint");
+      } else {
+        msg.innerHTML = "🎉 Chính xác! Bạn đã đoán đúng số bí mật!";
+        msg.classList.add("success");
+        resetBtn.style.display = "inline-flex";
+      }
+    }
+
+    function resetGame() {
+      // secret vẫn = 36
+      document.getElementById("guess").value = "";
+      const msg = document.getElementById("message");
+      msg.innerHTML = "";
+      msg.className = "";
+      document.getElementById("resetBtn").style.display = "none";
+    }
+  </script>
+</body>
+</html>
